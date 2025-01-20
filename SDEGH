@@ -1,15 +1,51 @@
-"""bgdGFDGDGDGDGDGDDGDGD
-DG
-DG
-DGD
-GD
-GD
-GD
-GD
-GD
-BGDBH
-ET
+#include <iostream>
+#include <algorithm>
 
-H4E6T4TH
-ETH
+void sortArray(int* arr, size_t size) {
+    if (arr == nullptr || size == 0) {
+        return;
+    }
 
+    std::sort(arr, arr + size);
+}
+
+double calculateAverage(int* arr, size_t size) {
+   
+    if (arr == nullptr || size == 0) {
+        return 0.0; 
+    }
+
+    double sum = 0.0;
+    for (size_t i = 0; i < size; ++i) {
+        sum += arr[i]; 
+    }
+
+    return sum / size; 
+}
+
+int main() {
+    size_t size = 5;
+    int* arr = new int[size]{-9, 23, 13, 0, -4};
+
+    std::cout << "Массив до сортировки: ";
+    for (size_t i = 0; i < size; ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+    
+    sortArray(arr, size);
+    
+    std::cout << "Массив после сортировки: ";
+    for (size_t i = 0; i < size; ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+
+
+    double average = calculateAverage(arr, size);
+    std::cout << "Среднее арифметическое: " << average << std::endl;
+
+    delete[] arr;
+
+    return 0;
+}
