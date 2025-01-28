@@ -1,30 +1,42 @@
 #include <iostream>
+using namespace std;
 
-int* MaxSum(int* arr1, int size1, int* arr2, int size2) {
-    int sum1 = 0;
-    for (int i = 0; i < size1; ++i) {
-        sum1 += arr1[i];
+bool isSymmetric(int** matrix, int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (matrix[i][j] != matrix[j][i]) {
+                return false; 
+            }
+        }
     }
-
-    int sum2 = 0;
-    for (int i = 0; i < size2; ++i) {
-        sum2 += arr2[i];
-    }
-
-    return (sum1 > sum2) ? arr1 : arr2;
+    return true;
 }
 
 int main() {
-    int arr1[] = {1, 2, 3};
-    int arr2[] = {4, 5, 6};
+    int size;
+    cout << "Введите размер квадратной матрицы: ";
+    cin >> size;
 
-    int* maxSumA = MaxSum(arr1, 3, arr2, 3);
-    
-    for (int i = 0; i < 3; ++i) {
-        std::cout << maxSumA[i] << " ";
+    int** matrix = new int*[size];
+    for (int i = 0; i < size; i++) {
+        matrix[i] = new int[size];
     }
-    std::cout << std::endl;
+
+    cout << "Введите элементы матрицы:" << endl;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            cin >> matrix[i][j];
+        }
+    }
+    if (isSymmetric(matrix, size)) {
+        cout << "Матрица симметрична." << endl;
+    } else {
+        cout << "Матрица не симметрична." << endl;
+    }
+    for (int i = 0; i < size; i++) {
+        delete[] matrix[i];
+    }
+    delete[] matrix;
 
     return 0;
 }
-
