@@ -1,59 +1,52 @@
 #include <iostream>
-using namespace std;
+#include <cstdlib>
+#include <ctime>
 
-bool areMatricesEqual(int** matrix1, int** matrix2, int rows, int cols) {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (matrix1[i][j] != matrix2[i][j]) {
-                return false; 
+class CardDeck {
+public:
+    CardDeck() {
+        const std::string suits[] = {"черви", "буби", "пики", "крести"};
+        const std::string ranks[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "валет", "дама", "король", "туз"};
+
+        int index = 0;
+        for (const auto& suit : suits) {
+            for (const auto& rank : ranks) {
+                deck[index++] = rank + " " + suit;
             }
         }
+
+        std::srand(static_cast<unsigned int>(std::time(0)));
+        for (int i = 0; i < 52; ++i) {
+            int j = std::rand() % 52;
+            std::swap(deck[i], deck[j]);
+        }
     }
-    return true;
-}
+
+    std::string drawCard() {
+        if (currentIndex >= 52) {
+            return "Нет больше карт";
+        }
+        return deck[currentIndex++];
+    }
+
+private:
+    std::string deck[52]; 
+    int currentIndex = 0;
+};
 
 int main() {
-    int rows, cols;
+    CardDeck cardDeck;
+    std::string input;
 
-    cout << "Введите количество строк и столбцов матриц: ";
-    cin >> rows >> cols;
-
-    int** matrix1 = new int*[rows];
-    for (int i = 0; i < rows; i++) {
-        matrix1[i] = new int[cols];
-    }
-
-    int** matrix2 = new int*[rows];
-    for (int i = 0; i < rows; i++) {
-        matrix2[i] = new int[cols];
-    }
-
-    cout << "Введите элементы первой матрицы:" << endl;
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            cin >> matrix1[i][j];
+    for (int i = 0; i < 53; ++i) {
+        std::cout << "Нажмите Enter для получения карты...";
+        std::getline(std::cin, input); 
+        std::string card = cardDeck.drawCard();
+        std::cout << card << std::endl;
+        if (card == "Нет больше карт") {
+            break; 
         }
     }
-
-    cout << "Введите элементы второй матрицы:" << endl;
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            cin >> matrix2[i][j];
-        }
-    }
-
-    if (areMatricesEqual(matrix1, matrix2, rows, cols)) {
-        cout << "Матрицы равны." << endl;
-    } else {
-        cout << "Матрицы не равны." << endl;
-    }
-
-    for (int i = 0; i < rows; i++) {
-        delete[] matrix1[i];
-        delete[] matrix2[i];
-    }
-    delete[] matrix1;
-    delete[] matrix2;
 
     return 0;
 }
