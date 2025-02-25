@@ -1,47 +1,64 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include <random>
 
-class Character {
+class Pudge {
 private:
-    std::string name;
-    int attack;
-    std::vector<std::string> abilities;
+    std::string name; 
+    int health;
+    int armor;
+    int rotting_flesh_stacks; 
 
 public:
-    Character(const std::string& name, int attack) : name(name), attack(attack) {}
+    Pudge(const std::string& name) : name(name), health(500), armor(0), rotting_flesh_stacks(0) {}
 
-    ~Character() {
-        std::cout << "Character " << name << " destroyed." << std::endl;
+    void displayStats() const {
+        std::cout << "Name: " << name << std::endl;
+        std::cout << "Health: " << health << std::endl;
+        std::cout << "Armor: " << armor << std::endl;
+        std::cout << "Rotting Flesh Stacks: " << rotting_flesh_stacks << std::endl;
     }
 
-    void addAbility(const std::string& ability) {
-        abilities.push_back(ability);
-    }
+    void FreshMeat(int strength) {
+        std::cout << name << " пожирает свежее мясо!" << std::endl;
+        int health_gain = 50 + strength * 10;
+        health += health_gain;
+        armor += strength * 2;
+        rotting_flesh_stacks++; 
 
-    void printRandomAbility() {
-        if (abilities.empty()) return;
-
+        
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distrib(0, abilities.size() - 1);
-        std::cout << name << " uses: " << abilities[distrib(gen)] << std::endl;
+        std::uniform_int_distribution<> distrib(1, 10); 
+
+        if (distrib(gen) == 1) {
+            std::cout << name << "от испорченного мяса болит живот! Здоровье снижено." << std::endl;
+            health -= 50; 
+        }
+
+        std::cout << "Gained " << health_gain << " health and " << strength * 2 << " armor." << std::endl;
+        displayStats(); 
     }
 
-    int calculateDamage(const std::string& stat) {
-        if (stat == "attack") {
-            return attack;
+    void RottingFleshAura() {
+        if (rotting_flesh_stacks > 0) {
+            std::cout << name << " излучает отвратительную ауру гниющей Плоти!" << std::endl;
+
         }
-        return 0;
+    }
+
+    void Hook(const std::string& target) {
+        std::cout << name << " hooks " << target << "!" << std::endl;
+     
     }
 };
 
 int main() {
-    Character hero("Hero", 10);
-    hero.addAbility("Punch");
-    hero.addAbility("Kick");
-    hero.printRandomAbility();
-    std::cout << "Damage: " << hero.calculateDamage("attack") << std::endl;
+    Pudge butcher("Butcher"); 
+    butcher.displayStats(); 
+    butcher.FreshMeat(5);   
+    butcher.FreshMeat(2);
+    butcher.RottingFleshAura();
+    butcher.Hook("some poor soul");
     return 0;
 }
