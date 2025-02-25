@@ -1,79 +1,47 @@
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <cstdlib>
-#include <ctime>
+#include <vector>
+#include <random>
 
-using namespace std;
+class Character {
+private:
+    std::string name;
+    int attack;
+    std::vector<std::string> abilities;
 
-int countVowels(const string& line) {
-    int count = 0;
-    for (char ch : line) {
-        ch = tolower(ch);
-        if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' || ch == 'y') {
-            count++;
+public:
+    Character(const std::string& name, int attack) : name(name), attack(attack) {}
+
+    ~Character() {
+        std::cout << "Character " << name << " destroyed." << std::endl;
+    }
+
+    void addAbility(const std::string& ability) {
+        abilities.push_back(ability);
+    }
+
+    void printRandomAbility() {
+        if (abilities.empty()) return;
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distrib(0, abilities.size() - 1);
+        std::cout << name << " uses: " << abilities[distrib(gen)] << std::endl;
+    }
+
+    int calculateDamage(const std::string& stat) {
+        if (stat == "attack") {
+            return attack;
         }
+        return 0;
     }
-    return count;
-}
-
-void createRandomFile(const string& filename, int numCount) {
-    ofstream outFile(filename);
-    if (!outFile) {
-        cerr << "Ошибка при создании файла!" << endl;
-        return;
-    }
-    
-    srand(static_cast<unsigned int>(time(0))); 
-    for (int i = 0; i < numCount; ++i) {
-        outFile << rand() % 100 << endl; 
-    }
-    outFile.close();
-}
-
-void copyFile(const string& source, const string& destination) {
-    ifstream inFile(source);
-    ofstream outFile(destination);
-    
-    if (!inFile || !outFile) {
-        cerr << "Ошибка при открытии файлов!" << endl;
-        return;
-    }
-    
-    string line;
-    while (getline(inFile, line)) {
-        outFile << line << endl;
-    }
-    
-    inFile.close();
-    outFile.close();
-}
+};
 
 int main() {
-    const string filename = "input.txt";
-    const string copyFilename = "output.txt";
-    
-    createRandomFile(filename, 10);
-
-    ifstream inFile(filename);
-    if (!inFile) {
-        cerr << "Ошибка при открытии файла!" << endl;
-        return 1;
-    }
-
-    string line;
-    int lineNumber = 0;
-    while (getline(inFile, line)) {
-        lineNumber++;
-        int vowelCount = countVowels(line);
-        cout << "Строка " << lineNumber << ": " << vowelCount << " гласных" << endl;
-    }
-    inFile.close();
-
-
-    copyFile(filename, copyFilename);
-    
-    cout << "Содержимое файла '" << filename << "' скопировано в '" << copyFilename << "'." << endl;
-
+    Character hero("Hero", 10);
+    hero.addAbility("Punch");
+    hero.addAbility("Kick");
+    hero.printRandomAbility();
+    std::cout << "Damage: " << hero.calculateDamage("attack") << std::endl;
     return 0;
 }
