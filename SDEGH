@@ -1,40 +1,63 @@
 #include <iostream>
 
-class Point {
+class DynamicArray {
 private:
-    double x;
-    double y;
-    double z;
+    int* data;
+    int size;
+    int capacity;
 
 public:
-    Point() : x(0.0), y(0.0), z(0.0) {}
-    Point(double x, double y, double z) : x(x), y(y), z(z) {}
+    DynamicArray() : data(nullptr), size(0), capacity(0) {}
 
-    Point(const Point& other) :
-        x(other.x + 1.0),
-        y(other.y + 1.0),
-        z(other.z + 1.0)
+    DynamicArray(int capacity) : size(0), capacity(capacity) {
+        data = new int[capacity];
+    }
+
+    ~DynamicArray() {
+        delete[] data;
+    }
+
+    DynamicArray(const DynamicArray& other) :
+        size(other.size),
+        capacity(other.capacity)
     {
         std::cout << "Вызван конструктор копирования. Значения увеличены." << std::endl;
+
+        data = new int[capacity];
+        for (int i = 0; i < size; ++i) {
+            data[i] = other.data[i] + 1;
+        }
     }
 
-    double getX() const { return x; }
-    double getY() const { return y; }
-    double getZ() const { return z; }
+    int getSize() const { return size; }
+    int getCapacity() const { return capacity; }
 
-    void print() const {
-        std::cout << "(" << x << ", " << y << ", " << z << ")" << std::endl;
+    int getElement(int index) const {
+        if (index >= 0 && index < size) {
+            return data[index];
+        }
+        return -1;
+    }
+
+    void setElement(int index, int value) {
+        if (index >= 0 && index < size) {
+            data[index] = value;
+        }
+    }
+
+    void push_back(int value) {
+        if (size == capacity) {
+           int newCapacity = (capacity == 0) ? 1 : capacity * 2;
+           int* newData = new int[newCapacity];
+           for (int i = 0; i < size; ++i) {
+               newData[i] = data[i];
+           }
+           delete[] data;
+           data = newData;
+           capacity = newCapacity;
+        }
+
+        data[size] = value;
+        size++;
     }
 };
-
-int main() {
-    Point p1(1.0, 2.0, 3.0);
-    std::cout << "Пункт 1: ";
-    p1.print();
-
-    Point p2 = p1; 
-    std::cout << "Пункт 2 (копия пункта 1):";
-    p2.print();
-
-    return 0;
-}
