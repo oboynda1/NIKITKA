@@ -1,120 +1,61 @@
 #include <iostream>
+#include <vector>
 #include <string>
-
-class BattleUnit {
-private:
-    int health;
-    int damage;
-    std::string unitType;
-
-
-    static int totalHealth; 
-    static int totalDamage;
-
-public:
-
-    BattleUnit() : health(100), damage(10), unitType("Basic Unit") {
-        totalHealth += health;
-        totalDamage += damage;
-    }
-
-
-    BattleUnit(int health, int damage, const std::string& unitType) :
-        health(health), damage(damage), unitType(unitType) {
-        totalHealth += health;
-        totalDamage += damage;
-    }
-
-
-    int getHealth() const { return health; }
-    int getDamage() const { return damage; }
-    std::string getUnitType() const { return unitType; }
-
-    void setHealth(int newHealth) {
-        totalHealth -= health; 
-        health = newHealth;
-        totalHealth += health;
-    }
-
-    void setDamage(int newDamage) {
-        totalDamage -= damage; 
-        damage = newDamage;
-        totalDamage += damage;
-    }
-
-    void setUnitType(const std::string& newUnitType) { unitType = newUnitType; }
-
-
-    void increaseHealth(int amount) {
-        totalHealth -= health; 
-        health += amount;
-        totalHealth += health;
-    }
-
-    void decreaseHealth(int amount) {
-        totalHealth -= health;
-        health -= amount;
-        if (health < 0) {
-            health = 0;
-        }
-        totalHealth += health; 
-    }
-
-    void increaseDamage(int amount) {
-        totalDamage -= damage;
-        damage += amount;
-        totalDamage += damage; 
-    }
-
-     void decreaseDamage(int amount) {
-        totalDamage -= damage;
-        damage -= amount;
-        if (damage < 0) {
-            damage = 0;
-        }
-        totalDamage += damage;
-    }
-
-    static int getTotalHealth() { return totalHealth; }
-    static int getTotalDamage() { return totalDamage; }
-
-
-    void displayInfo() const {
-        std::cout << "Unit Type: " << unitType << std::endl;
-        std::cout << "Health: " << health << std::endl;
-        std::cout << "Damage: " << damage << std::endl;
-    }
-};
-
-
-int BattleUnit::totalHealth = 0;
-int BattleUnit::totalDamage = 0;
-
+#include <algorithm> 
 
 int main() {
-    BattleUnit unit1(150, 20, "Warrior");
-    BattleUnit unit2(80, 30, "Archer");
-    BattleUnit unit3; 
 
-    std::cout << "Unit 1 Info:" << std::endl;
-    unit1.displayInfo();
-    std::cout << "Unit 2 Info:" << std::endl;
-    unit2.displayInfo();
-    std::cout << "Unit 3 Info:" << std::endl;
-    unit3.displayInfo();
 
-    std::cout << "\nTotal Army Health: " << BattleUnit::getTotalHealth() << std::endl;
-    std::cout << "Total Army Damage: " << BattleUnit::getTotalDamage() << std::endl;
+    int N;
+    std::cout << "Введите размер вектора для чисел (int): ";
+    std::cin >> N;
 
-    unit1.increaseHealth(50);
-    unit2.decreaseDamage(10);
+    std::vector<int> intVector;
+    std::cout << "Введите " << N << " чисел: ";
+    for (int i = 0; i < N; ++i) {
+        int number;
+        std::cin >> number;
+        intVector.push_back(number); 
+    }
 
-    std::cout << "\nAfter modifying unit 1 and unit 2:" << std::endl;
-    unit1.displayInfo();
-    unit2.displayInfo();
+    std::cout << "Числа в обратном порядке: ";
 
-    std::cout << "\nTotal Army Health: " << BattleUnit::getTotalHealth() << std::endl;
-    std::cout << "Total Army Damage: " << BattleUnit::getTotalDamage() << std::endl;
+    std::reverse(intVector.begin(), intVector.end());
+    for (int number : intVector) { // range-based for loop
+        std::cout << number << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "\nВведите размер вектора для строк (string): ";
+    std::cin >> N;
+
+    std::vector<std::string> stringVector;
+    std::cout << "Введите " << N << " строк: ";
+    std::cin.ignore();
+
+    for (int i = 0; i < N; ++i) {
+        std::string str;
+        std::getline(std::cin, str); 
+        stringVector.push_back(str);
+    }
+
+    std::cout << "Строки: ";
+    for (const std::string& str : stringVector) {
+        std::cout << str << " ";
+    }
+    std::cout << std::endl;
+
+
+    std::string newString;
+    std::cout << "Введите еще одну строку: ";
+    std::getline(std::cin, newString); 
+    stringVector.push_back(newString);
+
+    std::cout << "Строки после добавления: ";
+    for (const std::string& str : stringVector) {
+        std::cout << str << " ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
