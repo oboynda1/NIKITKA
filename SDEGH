@@ -1,91 +1,40 @@
 #include <iostream>
-#include <cmath> 
 
-class Точка {
+class Point {
 private:
     double x;
     double y;
-    double z; 
+    double z;
 
 public:
-   
-    Точка() : x(0.0), y(0.0), z(0.0) {} 
-    Точка(double x, double y, double z) : x(x), y(y), z(z) {} 
+    Point() : x(0.0), y(0.0), z(0.0) {}
+    Point(double x, double y, double z) : x(x), y(y), z(z) {}
 
-   
-    double ПолучитьX() const { return x; }
-    double ПолучитьY() const { return y; }
-    double ПолучитьZ() const { return z; }
-
-   
-    void УстановитьX(double x) { this->x = x; }
-    void УстановитьY(double y) { this->y = y; }
-    void УстановитьZ(double z) { this->z = z; }
-
-   
-
-  
-    bool operator==(const Точка& другаяТочка) const {
-        return (x == другаяТочка.x) && (y == другаяТочка.y) && (z == другаяТочка.z);
+    Point(const Point& other) :
+        x(other.x + 1.0),
+        y(other.y + 1.0),
+        z(other.z + 1.0)
+    {
+        std::cout << "Вызван конструктор копирования. Значения увеличены." << std::endl;
     }
 
-    
-    bool operator!=(const Точка& другаяТочка) const {
-        return !(*this == другаяТочка); 
-    }
+    double getX() const { return x; }
+    double getY() const { return y; }
+    double getZ() const { return z; }
 
-    Точка operator-(const Точка& другаяТочка) const {
-        return Точка(x - другаяТочка.x, y - другаяТочка.y, z - другаяТочка.z);
-    }
-
-  
-    Точка& operator++() {
-        x += 1.0;
-        y += 1.0;
-        z += 1.0;
-        return *this; 
-    }
-
-
-    Точка operator++(int) { 
-        Точка временнаяТочка = *this;
-        ++(*this);               
-        return временнаяТочка;      
-    }
-
-    void Вывести() const {
+    void print() const {
         std::cout << "(" << x << ", " << y << ", " << z << ")" << std::endl;
     }
 };
 
 int main() {
-    Точка точка1(1.0, 2.0, 3.0);
-    Точка точка2(1.0, 2.0, 3.0);
-    Точка точка3(4.0, 5.0, 6.0);
+    Point p1(1.0, 2.0, 3.0);
+    std::cout << "Пункт 1: ";
+    p1.print();
 
-   
-    std::cout << "точка1 == точка2: " << (точка1 == точка2) << std::endl; 
-    std::cout << "точка1 != точка3: " << (точка1 != точка3) << std::endl; 
+    Point p2 = p1; 
+    std::cout << "Пункт 2 (копия пункта 1):";
+    p2.print();
 
-  
-    Точка точка4 = точка3 - точка1;
-    std::cout << "точка3 - точка1: ";
-    точка4.Вывести(); 
-
- 
-    std::cout << "точка1 перед инкрементом: ";
-    точка1.Вывести();
-
-    Точка точка5 = точка1++; 
-    std::cout << "точка1 после постфиксного инкремента: ";
-    точка1.Вывести();
-    std::cout << "точка5 (результат постфиксного инкремента): ";
-    точка5.Вывести(); 
-
-    Точка точка6 = ++точка2; 
-    std::cout << "точка2 после префиксного инкремента: ";
-    точка2.Вывести(); 
-    std::cout << "точка6 (результат префиксного инкремента): ";
-    точка6.Вывести(); 
     return 0;
 }
