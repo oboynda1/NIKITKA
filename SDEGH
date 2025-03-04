@@ -1,64 +1,120 @@
 #include <iostream>
 #include <string>
-#include <random>
 
-class Pudge {
+class BattleUnit {
 private:
-    std::string name; 
     int health;
-    int armor;
-    int rotting_flesh_stacks; 
+    int damage;
+    std::string unitType;
+
+
+    static int totalHealth; 
+    static int totalDamage;
 
 public:
-    Pudge(const std::string& name) : name(name), health(500), armor(0), rotting_flesh_stacks(0) {}
 
-    void displayStats() const {
-        std::cout << "Name: " << name << std::endl;
+    BattleUnit() : health(100), damage(10), unitType("Basic Unit") {
+        totalHealth += health;
+        totalDamage += damage;
+    }
+
+
+    BattleUnit(int health, int damage, const std::string& unitType) :
+        health(health), damage(damage), unitType(unitType) {
+        totalHealth += health;
+        totalDamage += damage;
+    }
+
+
+    int getHealth() const { return health; }
+    int getDamage() const { return damage; }
+    std::string getUnitType() const { return unitType; }
+
+    void setHealth(int newHealth) {
+        totalHealth -= health; 
+        health = newHealth;
+        totalHealth += health;
+    }
+
+    void setDamage(int newDamage) {
+        totalDamage -= damage; 
+        damage = newDamage;
+        totalDamage += damage;
+    }
+
+    void setUnitType(const std::string& newUnitType) { unitType = newUnitType; }
+
+
+    void increaseHealth(int amount) {
+        totalHealth -= health; 
+        health += amount;
+        totalHealth += health;
+    }
+
+    void decreaseHealth(int amount) {
+        totalHealth -= health;
+        health -= amount;
+        if (health < 0) {
+            health = 0;
+        }
+        totalHealth += health; 
+    }
+
+    void increaseDamage(int amount) {
+        totalDamage -= damage;
+        damage += amount;
+        totalDamage += damage; 
+    }
+
+     void decreaseDamage(int amount) {
+        totalDamage -= damage;
+        damage -= amount;
+        if (damage < 0) {
+            damage = 0;
+        }
+        totalDamage += damage;
+    }
+
+    static int getTotalHealth() { return totalHealth; }
+    static int getTotalDamage() { return totalDamage; }
+
+
+    void displayInfo() const {
+        std::cout << "Unit Type: " << unitType << std::endl;
         std::cout << "Health: " << health << std::endl;
-        std::cout << "Armor: " << armor << std::endl;
-        std::cout << "Rotting Flesh Stacks: " << rotting_flesh_stacks << std::endl;
-    }
-
-    void FreshMeat(int strength) {
-        std::cout << name << " пожирает свежее мясо!" << std::endl;
-        int health_gain = 50 + strength * 10;
-        health += health_gain;
-        armor += strength * 2;
-        rotting_flesh_stacks++; 
-
-        
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distrib(1, 10); 
-
-        if (distrib(gen) == 1) {
-            std::cout << name << "от испорченного мяса болит живот! Здоровье снижено." << std::endl;
-            health -= 50; 
-        }
-
-        std::cout << "Gained " << health_gain << " health and " << strength * 2 << " armor." << std::endl;
-        displayStats(); 
-    }
-
-    void RottingFleshAura() {
-        if (rotting_flesh_stacks > 0) {
-            std::cout << name << " излучает отвратительную ауру гниющей Плоти!" << std::endl;
-
-        }
-    }
-
-    void Hook(const std::string& target) {
-        std::cout << name << " hooks " << target << "!" << std::endl;
-     
+        std::cout << "Damage: " << damage << std::endl;
     }
 };
 
+
+int BattleUnit::totalHealth = 0;
+int BattleUnit::totalDamage = 0;
+
+
 int main() {
-    Pudge butcher("Butcher"); 
-    butcher.displayStats(); 
-    butcher.FreshMeat(5);   
-    butcher.FreshMeat(2);
-    butcher.RottingFleshAura();
-    butcher.Hook("some poor soul");
+    BattleUnit unit1(150, 20, "Warrior");
+    BattleUnit unit2(80, 30, "Archer");
+    BattleUnit unit3; 
+
+    std::cout << "Unit 1 Info:" << std::endl;
+    unit1.displayInfo();
+    std::cout << "Unit 2 Info:" << std::endl;
+    unit2.displayInfo();
+    std::cout << "Unit 3 Info:" << std::endl;
+    unit3.displayInfo();
+
+    std::cout << "\nTotal Army Health: " << BattleUnit::getTotalHealth() << std::endl;
+    std::cout << "Total Army Damage: " << BattleUnit::getTotalDamage() << std::endl;
+
+    unit1.increaseHealth(50);
+    unit2.decreaseDamage(10);
+
+    std::cout << "\nAfter modifying unit 1 and unit 2:" << std::endl;
+    unit1.displayInfo();
+    unit2.displayInfo();
+
+    std::cout << "\nTotal Army Health: " << BattleUnit::getTotalHealth() << std::endl;
+    std::cout << "Total Army Damage: " << BattleUnit::getTotalDamage() << std::endl;
+
     return 0;
 }
