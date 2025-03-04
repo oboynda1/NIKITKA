@@ -1,61 +1,91 @@
 #include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm> 
+#include <cmath> 
+
+class Точка {
+private:
+    double x;
+    double y;
+    double z; 
+
+public:
+   
+    Точка() : x(0.0), y(0.0), z(0.0) {} 
+    Точка(double x, double y, double z) : x(x), y(y), z(z) {} 
+
+   
+    double ПолучитьX() const { return x; }
+    double ПолучитьY() const { return y; }
+    double ПолучитьZ() const { return z; }
+
+   
+    void УстановитьX(double x) { this->x = x; }
+    void УстановитьY(double y) { this->y = y; }
+    void УстановитьZ(double z) { this->z = z; }
+
+   
+
+  
+    bool operator==(const Точка& другаяТочка) const {
+        return (x == другаяТочка.x) && (y == другаяТочка.y) && (z == другаяТочка.z);
+    }
+
+    
+    bool operator!=(const Точка& другаяТочка) const {
+        return !(*this == другаяТочка); 
+    }
+
+    Точка operator-(const Точка& другаяТочка) const {
+        return Точка(x - другаяТочка.x, y - другаяТочка.y, z - другаяТочка.z);
+    }
+
+  
+    Точка& operator++() {
+        x += 1.0;
+        y += 1.0;
+        z += 1.0;
+        return *this; 
+    }
+
+
+    Точка operator++(int) { 
+        Точка временнаяТочка = *this;
+        ++(*this);               
+        return временнаяТочка;      
+    }
+
+    void Вывести() const {
+        std::cout << "(" << x << ", " << y << ", " << z << ")" << std::endl;
+    }
+};
 
 int main() {
+    Точка точка1(1.0, 2.0, 3.0);
+    Точка точка2(1.0, 2.0, 3.0);
+    Точка точка3(4.0, 5.0, 6.0);
 
+   
+    std::cout << "точка1 == точка2: " << (точка1 == точка2) << std::endl; 
+    std::cout << "точка1 != точка3: " << (точка1 != точка3) << std::endl; 
 
-    int N;
-    std::cout << "Введите размер вектора для чисел (int): ";
-    std::cin >> N;
+  
+    Точка точка4 = точка3 - точка1;
+    std::cout << "точка3 - точка1: ";
+    точка4.Вывести(); 
 
-    std::vector<int> intVector;
-    std::cout << "Введите " << N << " чисел: ";
-    for (int i = 0; i < N; ++i) {
-        int number;
-        std::cin >> number;
-        intVector.push_back(number); 
-    }
+ 
+    std::cout << "точка1 перед инкрементом: ";
+    точка1.Вывести();
 
-    std::cout << "Числа в обратном порядке: ";
+    Точка точка5 = точка1++; 
+    std::cout << "точка1 после постфиксного инкремента: ";
+    точка1.Вывести();
+    std::cout << "точка5 (результат постфиксного инкремента): ";
+    точка5.Вывести(); 
 
-    std::reverse(intVector.begin(), intVector.end());
-    for (int number : intVector) { 
-        std::cout << number << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "\nВведите размер вектора для строк (string): ";
-    std::cin >> N;
-
-    std::vector<std::string> stringVector;
-    std::cout << "Введите " << N << " строк: ";
-    std::cin.ignore();
-
-    for (int i = 0; i < N; ++i) {
-        std::string str;
-        std::getline(std::cin, str); 
-        stringVector.push_back(str);
-    }
-
-    std::cout << "Строки: ";
-    for (const std::string& str : stringVector) {
-        std::cout << str << " ";
-    }
-    std::cout << std::endl;
-
-
-    std::string newString;
-    std::cout << "Введите еще одну строку: ";
-    std::getline(std::cin, newString); 
-    stringVector.push_back(newString);
-
-    std::cout << "Строки после добавления: ";
-    for (const std::string& str : stringVector) {
-        std::cout << str << " ";
-    }
-    std::cout << std::endl;
-
+    Точка точка6 = ++точка2; 
+    std::cout << "точка2 после префиксного инкремента: ";
+    точка2.Вывести(); 
+    std::cout << "точка6 (результат префиксного инкремента): ";
+    точка6.Вывести(); 
     return 0;
 }
