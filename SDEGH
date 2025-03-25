@@ -1,63 +1,152 @@
 #include <iostream>
+#include <string>
 
-class DynamicArray {
+
+using namespace std;
+
+class Product {
 private:
-    int* data;
-    int size;
-    int capacity;
+    int id;            
+    double price;      
+    string name;      
+    string category;  
 
 public:
-    DynamicArray() : data(nullptr), size(0), capacity(0) {}
+    Product() : id(0), price(0.0), name(""), category("") {}
 
-    DynamicArray(int capacity) : size(0), capacity(capacity) {
-        data = new int[capacity];
-    }
+    Product(int id, double price, const string& name, const string& category)
+        : id(id), price(price), name(name), category(category) {}
 
-    ~DynamicArray() {
-        delete[] data;
-    }
 
-    DynamicArray(const DynamicArray& other) :
-        size(other.size),
-        capacity(other.capacity)
-    {
-        std::cout << "Вызван конструктор копирования. Значения увеличены." << std::endl;
+    int getId() const { return id; }
+    double getPrice() const { return price; }
+    string getName() const { return name; }
+    string getCategory() const { return category; }
 
-        data = new int[capacity];
-        for (int i = 0; i < size; ++i) {
-            data[i] = other.data[i] + 1;
-        }
-    }
+    void setId(int id) { this->id = id; }
+    void setPrice(double price) { this->price = price; }
+    void setName(const string& name) { this->name = name; }
+    void setCategory(const string& category) { this->category = category; }
 
-    int getSize() const { return size; }
-    int getCapacity() const { return capacity; }
-
-    int getElement(int index) const {
-        if (index >= 0 && index < size) {
-            return data[index];
-        }
-        return -1;
-    }
-
-    void setElement(int index, int value) {
-        if (index >= 0 && index < size) {
-            data[index] = value;
-        }
-    }
-
-    void push_back(int value) {
-        if (size == capacity) {
-           int newCapacity = (capacity == 0) ? 1 : capacity * 2;
-           int* newData = new int[newCapacity];
-           for (int i = 0; i < size; ++i) {
-               newData[i] = data[i];
-           }
-           delete[] data;
-           data = newData;
-           capacity = newCapacity;
-        }
-
-        data[size] = value;
-        size++;
+    string getInfo() const {
+        return "ID: " + to_string(id) + ", Название: " + name + ", Категория: " + category + ", Цена: " + to_string(price);
     }
 };
+
+int main() {
+    setlocale(LC_ALL, "rus");
+
+    const int MAX_PRODUCTS = 100; 
+    Product products[MAX_PRODUCTS];
+    int productCount = 0;
+
+    while (true) {
+        cout << "\nМеню:\n";
+        cout << "1. Добавить пустой товар\n";
+        cout << "2. Добавить товар с данными\n";
+        cout << "3. Редактировать товар\n";
+        cout << "4. Вывести все товары\n";
+        cout << "5. Отсортировать товары по цене\n";
+        cout << "6. Выход\n";
+        cout << "Выберите опцию: ";
+
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                if (productCount < MAX_PRODUCTS) {
+                    products[productCount] = Product(); 
+                    productCount++;
+                    cout << "Пустой товар добавлен.\n";
+                } else {
+                    cout << "Массив товаров полон.\n";
+                }
+                break;
+            }
+            case 2: {
+                if (productCount < MAX_PRODUCTS) {
+                    int id;
+                    double price;
+                    string name, category;
+
+                    cout << "Введите ID товара: ";
+                    cin >> id;
+                    cout << "Введите цену товара: ";
+                    cin >> price;
+                    cout << "Введите название товара: ";
+                    cin >> name;
+                    cout << "Введите категорию товара: ";
+                    cin >> category;
+
+                    products[productCount] = Product(id, price, name, category);
+                    productCount++;
+                    cout << "Товар добавлен.\n";
+                } else {
+                    cout << "Массив товаров полон.\n";
+                }
+                break;
+            }
+            case 3: {
+                int index;
+                cout << "Введите индекс товара для редактирования (от 0 до " << productCount - 1 << "): ";
+                cin >> index;
+
+                if (index >= 0 && index < productCount) {
+                    int id;
+                    double price;
+                    string name, category;
+
+                    cout << "Введите новый ID товара: ";
+                    cin >> id;
+                    cout << "Введите новую цену товара: ";
+                    cin >> price;
+                    cout << "Введите новое название товара: ";
+                    cin >> name;
+                    cout << "Введите новую категорию товара: ";
+                    cin >> category;
+
+                    products[index].setId(id);
+                    products[index].setPrice(price);
+                    products[index].setName(name);
+                    products[index].setCategory(category);
+                    cout << "Товар обновлен.\n";
+                } else {
+                    cout << "Неверный индекс.\n";
+                }
+                break;
+            }
+            case 4: {
+                cout << "Товары:\n";
+                for (int i = 0; i < productCount; i++) {
+                    cout << products[i].getInfo() << endl;
+                }
+                break;
+            }
+            case 5: {
+                for (int i = 0; i < productCount - 1; i++) {
+                    for (int j = 0; j < productCount - i - 1; j++) {
+                        if (products[j].getPrice() > products[j + 1].getPrice()) {
+                            Product temp = products[j];
+                            products[j] = products[j + 1];
+                            products[j + 1] = temp;
+                        }
+                    }
+                }
+                cout << "Товары отсортированы по цене.\n";
+                break;
+            }
+            case 6: {
+                cout << "Выход из программы.\n";
+                return 0; 
+            }
+            default: {
+                cout << "Неверная опция. Пожалуйста, попробуйте снова.\n";
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
+               
