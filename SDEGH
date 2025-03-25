@@ -1,50 +1,51 @@
 #include <iostream>
-#include <string>
 
 using namespace std;
 
+class A;
 
-class Animal {
+class B;
+
+void addFields(const A& a, const B& b);
+
+class A {
 private:
-    string name; 
-    int weight;  
-
-protected:
-    string species; 
+    int x; 
+    double y;
 
 public:
-    Animal(const string& name, int weight, const string& species)
-        : name(name), weight(weight), species(species) {}
 
-    void print() const {
-        cout << "Имя: " << name << ", Вес: " << weight << " кг, Вид: " << species << endl;
-    }
+    A(int x, double y) : x(x), y(y) {}
+
+
+    friend void addFields(const A& a, const B& b);
 };
 
-class Cat : public Animal {
+
+class B {
+private:
+    int m; 
+    double n; 
+
 public:
 
-    Cat(const string& name, int weight)
-        : Animal(name, weight, "Кошка") {}
+    B(int m, double n) : m(m), n(n) {}
+
+
+    friend void addFields(const A& a, const B& b);
 };
 
-class Dog : public Animal {
-public:
-
-    Dog(const string& name, int weight)
-        : Animal(name, weight, "Собака") {}
-};
+void addFields(const A& a, const B& b) {
+    double sumX = a.x + b.m; 
+    double sumY = a.y + b.n;
+    cout << "Сумма полей: " << sumX << " (x + m), " << sumY << " (y + n)" << endl;
+}
 
 int main() {
+    A objA(5, 3.5); 
+    B objB(10, 2.5); 
 
-    Cat cat1("Мурка", 4);
-    Dog dog1("Шарик", 10);
-    Cat cat2("Барсик", 5);
-    Dog dog2("Рекс", 12);
+    addFields(objA, objB);
 
-    cat1.print();
-    dog1.print();
-    cat2.print();
-    dog2.print();
 
 }
