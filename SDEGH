@@ -1,101 +1,87 @@
 #include <iostream>
+#include <limits>
+
+using namespace std;
+
+double celsiusToFahrenheit(double celsius) {
+    return (celsius * 9.0 / 5.0) + 32.0;
+}
+
+double fahrenheitToCelsius(double fahrenheit) {
+    return (fahrenheit - 32.0) * 5.0 / 9.0;
+}
+int main() {
+    double celsius, fahrenheit;
+
+    cout << "Введите температуру в градусах Цельсия: ";
+    cin >> celsius;
+    fahrenheit = celsiusToFahrenheit(celsius);
+    cout << "Температура в градусах Фаренгейта: " << static_cast<int>(fahrenheit) << endl;
+
+    cout << "Введите температуру в градусах Фаренгейта: ";
+    cin >> fahrenheit;
+    celsius = fahrenheitToCelsius(fahrenheit);
+    cout << "Температура в градусах Цельсия: " << static_cast<int>(celsius) << endl;
+
+   
+}
+
+ВТОРАЯ ЧАСТЬ
+
+#include <iostream>
 #include <string>
 
 using namespace std;
 
-class ElectricVehicle {
-protected:
-    int batteryLevel;
+class Vehicle {
+public:
+    virtual void displayInfo() const = 0;
+    virtual ~Vehicle() {}
+};
+
+class Car : public Vehicle {
+private:
+    string brand;
+    int doors;
 
 public:
-    ElectricVehicle() : batteryLevel(0) {}
+    Car(const string& brand, int doors) : brand(brand), doors(doors) {}
 
-    void charge(int amount) {
-        batteryLevel += amount;
-        cout << "Заряд батареи увеличен на " << amount << ". Текущий уровень заряда: " << batteryLevel << endl;
-    }
-
-    void showBattery() const {
-        cout << "Уровень заряда батареи: " << batteryLevel << endl;
+    void displayInfo() const override {
+        cout << "Легковой автомобиль: " << brand << ", Двери: " << doors << endl;
     }
 };
 
-class LandTransport {
-protected:
-    int speed;
+class Truck : public Vehicle {
+private:
+    string brand;
+    double loadCapacity;
 
 public:
-    LandTransport() : speed(0) {}
+    Truck(const string& brand, double loadCapacity) : brand(brand), loadCapacity(loadCapacity) {}
 
-    void accelerate(int value) {
-        speed += value;
-        cout << "Увеличена скорость на " << value << ". Текущая скорость: " << speed << endl;
-    }
-
-    void brake(int value) {
-        speed -= value;
-        if (speed < 0) speed = 0;
-        cout << "Снижена скорость на " << value << ". Текущая скорость: " << speed << endl;
-    }
-};
-
-class WaterTransport {
-protected:
-    int depth;
-
-public:
-    WaterTransport() : depth(0) {}
-
-    void dive(int value) {
-        depth += value;
-        cout << "Увеличена глубина на " << value << ". Текущая глубина: " << depth << endl;
-    }
-
-    void surface(int value) {
-        depth -= value;
-        if (depth < 0) depth = 0;
-        cout << "Снижена глубина на " << value << ". Текущая глубина: " << depth << endl;
-    }
-};
-
-class ElectricCar : public ElectricVehicle, public LandTransport {
-public:
-    void drive() {
-        cout << "Электромобиль движется." << endl;
-    }
-};
-
-class ElectricBoat : public ElectricVehicle, public WaterTransport {
-public:
-    void sail() {
-        cout << "Электрическая лодка плывет." << endl;
-    }
-};
-
-class AmphibiousVehicle : public ElectricCar, public ElectricBoat {
-public:
-    void switchToLandMode() {
-        cout << "Переключение в режим наземного транспорта." << endl;
-    }
-
-    void switchToWaterMode() {
-        cout << "Переключение в режим водного транспорта." << endl;
+    void displayInfo() const override {
+        cout << "Грузовой автомобиль: " << brand << ", Грузоподъемность: " << loadCapacity << " тонн" << endl;
     }
 };
 
 int main() {
-    AmphibiousVehicle amphibiousVehicle;
+    const int FLEET_SIZE = 4;
+    Vehicle* fleet[FLEET_SIZE];
 
-    amphibiousVehicle.charge(100);
-    amphibiousVehicle.showBattery();
+    fleet[0] = new Car("Toyota", 4);
+    fleet[1] = new Truck("Volvo", 10);
+    fleet[2] = new Car("Honda", 2);
+    fleet[3] = new Truck("Scania", 15);
 
-    amphibiousVehicle.accelerate(50);
-    amphibiousVehicle.drive();
+    cout << "Информация об автопарке:" << endl;
+    for (int i = 0; i < FLEET_SIZE; i++) {
+        fleet[i]->displayInfo();
+    }
 
-    amphibiousVehicle.dive(10);
-    amphibiousVehicle.sail();
+    for (int i = 0; i < FLEET_SIZE; i++) {
+        delete fleet[i];
+    }
 
-    amphibiousVehicle.switchToWaterMode();
-    amphibiousVehicle.switchToLandMode();
 
 }
