@@ -1,51 +1,74 @@
 #include <iostream>
+#include <string>
 
 using namespace std;
 
-class A;
-
-class B;
-
-void addFields(const A& a, const B& b);
-
-class A {
-private:
-    int x; 
-    double y;
+class Vehicle {
+protected:
+    string brand; 
+    int year;     
 
 public:
+    Vehicle(const string& brand, int year) : brand(brand), year(year) {}
 
-    A(int x, double y) : x(x), y(y) {}
+    virtual void displayInfo() const = 0;
 
-
-    friend void addFields(const A& a, const B& b);
+    virtual ~Vehicle() {}
 };
 
-
-class B {
+class Car : public Vehicle {
 private:
-    int m; 
-    double n; 
+    int doors; 
 
 public:
+    Car(const string& brand, int year, int doors) : Vehicle(brand, year), doors(doors) {}
 
-    B(int m, double n) : m(m), n(n) {}
-
-
-    friend void addFields(const A& a, const B& b);
+    void displayInfo() const override {
+        cout << "Автомобиль: " << brand << ", Год: " << year << ", Двери: " << doors << endl;
+    }
 };
 
-void addFields(const A& a, const B& b) {
-    double sumX = a.x + b.m; 
-    double sumY = a.y + b.n;
-    cout << "Сумма полей: " << sumX << " (x + m), " << sumY << " (y + n)" << endl;
+class Bike : public Vehicle {
+private:
+    bool hasCarrier;
+
+public:
+    Bike(const string& brand, int year, bool hasCarrier) : Vehicle(brand, year), hasCarrier(hasCarrier) {}
+
+    void displayInfo() const override {
+        cout << "Велосипед: " << brand << ", Год: " << year << ", Багажник: " << (hasCarrier ? "Да" : "Нет") << endl;
+    }
+};
+
+void log(const string& message) {
+    cout << "[ЛОГ] " << message << endl;
 }
 
 int main() {
-    A objA(5, 3.5); 
-    B objB(10, 2.5); 
+    const int SIZE = 5;
+    Vehicle* vehicles[SIZE];
 
-    addFields(objA, objB);
+    vehicles[0] = new Car("Toyota", 2020, 4);
+    log("Создан автомобиль: Toyota, 2020, 4 двери");
 
+    vehicles[1] = new Bike("Yamaha", 2019, true);
+    log("Создан велосипед: Yamaha, 2019, есть багажник");
+
+    vehicles[2] = new Car("Honda", 2021, 2);
+    log("Создан автомобиль: Honda, 2021, 2 двери");
+
+    vehicles[3] = new Bike("Suzuki", 2018, false);
+    log("Создан велосипед: Suzuki, 2018, нет багажника");
+
+    vehicles[4] = new Car("Ford", 2022, 4);
+    log("Создан автомобиль: Ford, 2022, 4 двери");
+
+    for (int i = 0; i < SIZE; i++) {
+        vehicles[i]->displayInfo();
+    }
+
+    for (int i = 0; i < SIZE; i++) {
+        delete vehicles[i];
+    }
 
 }
