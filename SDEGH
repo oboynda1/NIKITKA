@@ -1,191 +1,101 @@
 #include <iostream>
 #include <string>
-#include <limits>
 
 using namespace std;
 
-class Assessment {
+class ElectricVehicle {
 protected:
-    string name;
-    int score;
+    int batteryLevel;
 
 public:
-    Assessment() : name(""), score(0) {}
+    ElectricVehicle() : batteryLevel(0) {}
 
-    Assessment(const string& name, int score) : name(name) {
-        setScore(score);
+    void charge(int amount) {
+        batteryLevel += amount;
+        cout << "Заряд батареи увеличен на " << amount << ". Текущий уровень заряда: " << batteryLevel << endl;
     }
 
-    void setScore(int score) {
-        if (score < 0 || score > 100) {
-            throw invalid_argument("Оценка должна быть в диапазоне от 0 до 100.");
-        }
-        this->score = score;
-    }
-
-    virtual void display() const = 0;
-
-    bool operator==(const Assessment& other) const {
-        return name == other.name && score == other.score;
-    }
-
-    Assessment operator+(const Assessment& other) const {
-        return Assessment(name + " & " + other.name, score + other.score);
-    }
-
-    Assessment& operator++() {
-        if (score < 100) {
-            score++;
-        }
-        return *this;
-    }
-
-    virtual ~Assessment() {}
-};
-
-class Test : public Assessment {
-public:
-    Test() : Assessment() {}
-
-    Test(const string& name, int score) : Assessment(name, score) {}
-
-    void display() const override {
-        cout << "Тест: " << name << ", Оценка: " << score << endl;
+    void showBattery() const {
+        cout << "Уровень заряда батареи: " << batteryLevel << endl;
     }
 };
 
-class Exam : public Assessment {
+class LandTransport {
+protected:
+    int speed;
+
 public:
-    Exam() : Assessment() {}
+    LandTransport() : speed(0) {}
 
-    Exam(const string& name, int score) : Assessment(name, score) {}
+    void accelerate(int value) {
+        speed += value;
+        cout << "Увеличена скорость на " << value << ". Текущая скорость: " << speed << endl;
+    }
 
-    void display() const override {
-        cout << "Экзамен: " << name << ", Оценка: " << score << endl;
+    void brake(int value) {
+        speed -= value;
+        if (speed < 0) speed = 0;
+        cout << "Снижена скорость на " << value << ". Текущая скорость: " << speed << endl;
     }
 };
 
-class FinalExam : public Exam {
+class WaterTransport {
+protected:
+    int depth;
+
 public:
-    FinalExam() : Exam() {}
+    WaterTransport() : depth(0) {}
 
-    FinalExam(const string& name, int score) : Exam(name, score) {}
+    void dive(int value) {
+        depth += value;
+        cout << "Увеличена глубина на " << value << ". Текущая глубина: " << depth << endl;
+    }
 
-    void display() const override {
-        cout << "Выпускной экзамен: " << name << ", Оценка: " << score << endl;
+    void surface(int value) {
+        depth -= value;
+        if (depth < 0) depth = 0;
+        cout << "Снижена глубина на " << value << ". Текущая глубина: " << depth << endl;
     }
 };
 
-int inputInt(const string& prompt) {
-    int value;
-    while (true) {
-        cout << prompt;
-        cin >> value;
-        if (cin.fail() || value < 0 || value > 100) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Ошибка: введите целое число от 0 до 100." << endl;
-        } else {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return value;
-        }
+class ElectricCar : public ElectricVehicle, public LandTransport {
+public:
+    void drive() {
+        cout << "Электромобиль движется." << endl;
     }
-}
+};
+
+class ElectricBoat : public ElectricVehicle, public WaterTransport {
+public:
+    void sail() {
+        cout << "Электрическая лодка плывет." << endl;
+    }
+};
+
+class AmphibiousVehicle : public ElectricCar, public ElectricBoat {
+public:
+    void switchToLandMode() {
+        cout << "Переключение в режим наземного транспорта." << endl;
+    }
+
+    void switchToWaterMode() {
+        cout << "Переключение в режим водного транспорта." << endl;
+    }
+};
 
 int main() {
-    const int SIZE = 100;
-    Assessment* assessments[SIZE];
-    int count = 0;
-    int choice;
+    AmphibiousVehicle amphibiousVehicle;
 
-    while (true) {
-        cout << "\nМеню:\n";
-        cout << "1. Добавить новый элемент\n";
-        cout << "2. Удалить элемент по индексу\n";
-        cout << "3. Вывод всех элементов\n";
-        cout << "4. Сравнение двух элементов на равенство\n";
-        cout << "5. Завершение работы приложения\n";
-        cout << "Выберите опцию: ";
-        cin >> choice;
+    amphibiousVehicle.charge(100);
+    amphibiousVehicle.showBattery();
 
-        switch (choice) {
-            case 1: {
-                if (count >= SIZE) {
-                    cout << "Достигнуто максимальное количество элементов." << endl;
-                    break;
-                }
-                cout << "Выберите тип оценки:\n";
-                cout << "1. Тест\n";
-                cout << "2. Экзамен\n";
-                cout << "3. Выпускной экзамен\n";
-                int type;
-                cin >> type;
+    amphibiousVehicle.accelerate(50);
+    amphibiousVehicle.drive();
 
-                string name;
-                int score;
+    amphibiousVehicle.dive(10);
+    amphibiousVehicle.sail();
 
-                cout << "Введите название: ";
-                cin.ignore();
-                getline(cin, name);
-                score = inputInt("Введите оценку (0-100): ");
+    amphibiousVehicle.switchToWaterMode();
+    amphibiousVehicle.switchToLandMode();
 
-                if (type == 1) {
-                    assessments[count++] = new Test(name, score);
-                } else if (type == 2) {
-                    assessments[count++] = new Exam(name, score);
-                } else if (type == 3) {
-                    assessments[count++] = new FinalExam(name, score);
-                }
-                break;
-            }
-            case 2: {
-                int index;
-                cout << "Введите индекс элемента для удаления (0 до " << count - 1 << "): ";
-                cin >> index;
-                if (index >= 0 && index < count) {
-                    delete assessments[index];
-                    for (int i = index; i < count - 1; i++) {
-                        assessments[i] = assessments[i + 1];
-                    }
-                    count--;
-                } else {
-                    cout << "Неверный индекс." << endl;
-                }
-                break;
-            }
-            case 3:
-            case 3: {
-                for (int i = 0; i < count; i++) {
-                    assessments[i]->display();
-                }
-                break;
-            }
-            case 4: {
-                int index1, index2;
-                cout << "Введите индексы для сравнения (0 до " << count - 1 << "): ";
-                cin >> index1 >> index2;
-                if (index1 >= 0 && index1 < count && index2 >= 0 && index2 < count) {
-                    if (*assessments[index1] == *assessments[index2]) {
-                        cout << "Элементы равны." << endl;
-                    } else {
-                        cout << "Элементы не равны." << endl;
-                    }
-                } else {
-                    cout << "Неверные индексы." << endl;
-                }
-                break;
-            }
-            case 5: {
-                cout << "Завершение работы приложения." << endl;
-                for (int i = 0; i < count; i++) {
-                    delete assessments[i];
-                }
-                return 0;
-            }
-            default: {
-                cout << "Неверная опция. Пожалуйста, попробуйте снова." << endl;
-                break;
-            }
-        }
-    }
 }
