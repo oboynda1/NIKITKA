@@ -1,152 +1,50 @@
 #include <iostream>
 #include <string>
 
-
 using namespace std;
 
-class Product {
+
+class Animal {
 private:
-    int id;            
-    double price;      
-    string name;      
-    string category;  
+    string name; 
+    int weight;  
+
+protected:
+    string species; 
 
 public:
-    Product() : id(0), price(0.0), name(""), category("") {}
+    Animal(const string& name, int weight, const string& species)
+        : name(name), weight(weight), species(species) {}
 
-    Product(int id, double price, const string& name, const string& category)
-        : id(id), price(price), name(name), category(category) {}
-
-
-    int getId() const { return id; }
-    double getPrice() const { return price; }
-    string getName() const { return name; }
-    string getCategory() const { return category; }
-
-    void setId(int id) { this->id = id; }
-    void setPrice(double price) { this->price = price; }
-    void setName(const string& name) { this->name = name; }
-    void setCategory(const string& category) { this->category = category; }
-
-    string getInfo() const {
-        return "ID: " + to_string(id) + ", Название: " + name + ", Категория: " + category + ", Цена: " + to_string(price);
+    void print() const {
+        cout << "Имя: " << name << ", Вес: " << weight << " кг, Вид: " << species << endl;
     }
 };
 
+class Cat : public Animal {
+public:
+
+    Cat(const string& name, int weight)
+        : Animal(name, weight, "Кошка") {}
+};
+
+class Dog : public Animal {
+public:
+
+    Dog(const string& name, int weight)
+        : Animal(name, weight, "Собака") {}
+};
+
 int main() {
-    setlocale(LC_ALL, "rus");
 
-    const int MAX_PRODUCTS = 100; 
-    Product products[MAX_PRODUCTS];
-    int productCount = 0;
+    Cat cat1("Мурка", 4);
+    Dog dog1("Шарик", 10);
+    Cat cat2("Барсик", 5);
+    Dog dog2("Рекс", 12);
 
-    while (true) {
-        cout << "\nМеню:\n";
-        cout << "1. Добавить пустой товар\n";
-        cout << "2. Добавить товар с данными\n";
-        cout << "3. Редактировать товар\n";
-        cout << "4. Вывести все товары\n";
-        cout << "5. Отсортировать товары по цене\n";
-        cout << "6. Выход\n";
-        cout << "Выберите опцию: ";
+    cat1.print();
+    dog1.print();
+    cat2.print();
+    dog2.print();
 
-        int choice;
-        cin >> choice;
-
-        switch (choice) {
-            case 1: {
-                if (productCount < MAX_PRODUCTS) {
-                    products[productCount] = Product(); 
-                    productCount++;
-                    cout << "Пустой товар добавлен.\n";
-                } else {
-                    cout << "Массив товаров полон.\n";
-                }
-                break;
-            }
-            case 2: {
-                if (productCount < MAX_PRODUCTS) {
-                    int id;
-                    double price;
-                    string name, category;
-
-                    cout << "Введите ID товара: ";
-                    cin >> id;
-                    cout << "Введите цену товара: ";
-                    cin >> price;
-                    cout << "Введите название товара: ";
-                    cin >> name;
-                    cout << "Введите категорию товара: ";
-                    cin >> category;
-
-                    products[productCount] = Product(id, price, name, category);
-                    productCount++;
-                    cout << "Товар добавлен.\n";
-                } else {
-                    cout << "Массив товаров полон.\n";
-                }
-                break;
-            }
-            case 3: {
-                int index;
-                cout << "Введите индекс товара для редактирования (от 0 до " << productCount - 1 << "): ";
-                cin >> index;
-
-                if (index >= 0 && index < productCount) {
-                    int id;
-                    double price;
-                    string name, category;
-
-                    cout << "Введите новый ID товара: ";
-                    cin >> id;
-                    cout << "Введите новую цену товара: ";
-                    cin >> price;
-                    cout << "Введите новое название товара: ";
-                    cin >> name;
-                    cout << "Введите новую категорию товара: ";
-                    cin >> category;
-
-                    products[index].setId(id);
-                    products[index].setPrice(price);
-                    products[index].setName(name);
-                    products[index].setCategory(category);
-                    cout << "Товар обновлен.\n";
-                } else {
-                    cout << "Неверный индекс.\n";
-                }
-                break;
-            }
-            case 4: {
-                cout << "Товары:\n";
-                for (int i = 0; i < productCount; i++) {
-                    cout << products[i].getInfo() << endl;
-                }
-                break;
-            }
-            case 5: {
-                for (int i = 0; i < productCount - 1; i++) {
-                    for (int j = 0; j < productCount - i - 1; j++) {
-                        if (products[j].getPrice() > products[j + 1].getPrice()) {
-                            Product temp = products[j];
-                            products[j] = products[j + 1];
-                            products[j + 1] = temp;
-                        }
-                    }
-                }
-                cout << "Товары отсортированы по цене.\n";
-                break;
-            }
-            case 6: {
-                cout << "Выход из программы.\n";
-                return 0; 
-            }
-            default: {
-                cout << "Неверная опция. Пожалуйста, попробуйте снова.\n";
-                break;
-            }
-        }
-    }
-
-    return 0;
 }
-               
