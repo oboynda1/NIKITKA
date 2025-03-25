@@ -1,74 +1,191 @@
 #include <iostream>
 #include <string>
+#include <limits>
 
 using namespace std;
 
-class Vehicle {
+class Assessment {
 protected:
-    string brand; 
-    int year;     
+    string name;
+    int score;
 
 public:
-    Vehicle(const string& brand, int year) : brand(brand), year(year) {}
+    Assessment() : name(""), score(0) {}
 
-    virtual void displayInfo() const = 0;
+    Assessment(const string& name, int score) : name(name) {
+        setScore(score);
+    }
 
-    virtual ~Vehicle() {}
+    void setScore(int score) {
+        if (score < 0 || score > 100) {
+            throw invalid_argument("Оценка должна быть в диапазоне от 0 до 100.");
+        }
+        this->score = score;
+    }
+
+    virtual void display() const = 0;
+
+    bool operator==(const Assessment& other) const {
+        return name == other.name && score == other.score;
+    }
+
+    Assessment operator+(const Assessment& other) const {
+        return Assessment(name + " & " + other.name, score + other.score);
+    }
+
+    Assessment& operator++() {
+        if (score < 100) {
+            score++;
+        }
+        return *this;
+    }
+
+    virtual ~Assessment() {}
 };
 
-class Car : public Vehicle {
-private:
-    int doors; 
-
+class Test : public Assessment {
 public:
-    Car(const string& brand, int year, int doors) : Vehicle(brand, year), doors(doors) {}
+    Test() : Assessment() {}
 
-    void displayInfo() const override {
-        cout << "Автомобиль: " << brand << ", Год: " << year << ", Двери: " << doors << endl;
+    Test(const string& name, int score) : Assessment(name, score) {}
+
+    void display() const override {
+        cout << "Тест: " << name << ", Оценка: " << score << endl;
     }
 };
 
-class Bike : public Vehicle {
-private:
-    bool hasCarrier;
-
+class Exam : public Assessment {
 public:
-    Bike(const string& brand, int year, bool hasCarrier) : Vehicle(brand, year), hasCarrier(hasCarrier) {}
+    Exam() : Assessment() {}
 
-    void displayInfo() const override {
-        cout << "Велосипед: " << brand << ", Год: " << year << ", Багажник: " << (hasCarrier ? "Да" : "Нет") << endl;
+    Exam(const string& name, int score) : Assessment(name, score) {}
+
+    void display() const override {
+        cout << "Экзамен: " << name << ", Оценка: " << score << endl;
     }
 };
 
-void log(const string& message) {
-    cout << "[ЛОГ] " << message << endl;
+class FinalExam : public Exam {
+public:
+    FinalExam() : Exam() {}
+
+    FinalExam(const string& name, int score) : Exam(name, score) {}
+
+    void display() const override {
+        cout << "Выпускной экзамен: " << name << ", Оценка: " << score << endl;
+    }
+};
+
+int inputInt(const string& prompt) {
+    int value;
+    while (true) {
+        cout << prompt;
+        cin >> value;
+        if (cin.fail() || value < 0 || value > 100) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Ошибка: введите целое число от 0 до 100." << endl;
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return value;
+        }
+    }
 }
 
 int main() {
-    const int SIZE = 5;
-    Vehicle* vehicles[SIZE];
+    const int SIZE = 100;
+    Assessment* assessments[SIZE];
+    int count = 0;
+    int choice;
 
-    vehicles[0] = new Car("Toyota", 2020, 4);
-    log("Создан автомобиль: Toyota, 2020, 4 двери");
+    while (true) {
+        cout << "\nМеню:\n";
+        cout << "1. Добавить новый элемент\n";
+        cout << "2. Удалить элемент по индексу\n";
+        cout << "3. Вывод всех элементов\n";
+        cout << "4. Сравнение двух элементов на равенство\n";
+        cout << "5. Завершение работы приложения\n";
+        cout << "Выберите опцию: ";
+        cin >> choice;
 
-    vehicles[1] = new Bike("Yamaha", 2019, true);
-    log("Создан велосипед: Yamaha, 2019, есть багажник");
+        switch (choice) {
+            case 1: {
+                if (count >= SIZE) {
+                    cout << "Достигнуто максимальное количество элементов." << endl;
+                    break;
+                }
+                cout << "Выберите тип оценки:\n";
+                cout << "1. Тест\n";
+                cout << "2. Экзамен\n";
+                cout << "3. Выпускной экзамен\n";
+                int type;
+                cin >> type;
 
-    vehicles[2] = new Car("Honda", 2021, 2);
-    log("Создан автомобиль: Honda, 2021, 2 двери");
+                string name;
+                int score;
 
-    vehicles[3] = new Bike("Suzuki", 2018, false);
-    log("Создан велосипед: Suzuki, 2018, нет багажника");
+                cout << "Введите название: ";
+                cin.ignore();
+                getline(cin, name);
+                score = inputInt("Введите оценку (0-100): ");
 
-    vehicles[4] = new Car("Ford", 2022, 4);
-    log("Создан автомобиль: Ford, 2022, 4 двери");
-
-    for (int i = 0; i < SIZE; i++) {
-        vehicles[i]->displayInfo();
+                if (type == 1) {
+                    assessments[count++] = new Test(name, score);
+                } else if (type == 2) {
+                    assessments[count++] = new Exam(name, score);
+                } else if (type == 3) {
+                    assessments[count++] = new FinalExam(name, score);
+                }
+                break;
+            }
+            case 2: {
+                int index;
+                cout << "Введите индекс элемента для удаления (0 до " << count - 1 << "): ";
+                cin >> index;
+                if (index >= 0 && index < count) {
+                    delete assessments[index];
+                    for (int i = index; i < count - 1; i++) {
+                        assessments[i] = assessments[i + 1];
+                    }
+                    count--;
+                } else {
+                    cout << "Неверный индекс." << endl;
+                }
+                break;
+            }
+            case 3:
+            case 3: {
+                for (int i = 0; i < count; i++) {
+                    assessments[i]->display();
+                }
+                break;
+            }
+            case 4: {
+                int index1, index2;
+                cout << "Введите индексы для сравнения (0 до " << count - 1 << "): ";
+                cin >> index1 >> index2;
+                if (index1 >= 0 && index1 < count && index2 >= 0 && index2 < count) {
+                    if (*assessments[index1] == *assessments[index2]) {
+                        cout << "Элементы равны." << endl;
+                    } else {
+                        cout << "Элементы не равны." << endl;
+                    }
+                } else {
+                    cout << "Неверные индексы." << endl;
+                }
+                break;
+            }
+            case 5: {
+                cout << "Завершение работы приложения." << endl;
+                for (int i = 0; i < count; i++) {
+                    delete assessments[i];
+                }
+                return 0;
+            }
+            default: {
+                cout << "Неверная опция. Пожалуйста, попробуйте снова." << endl;
+                break;
+            }
+        }
     }
-
-    for (int i = 0; i < SIZE; i++) {
-        delete vehicles[i];
-    }
-
 }
