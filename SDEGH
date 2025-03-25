@@ -1,87 +1,38 @@
 #include <iostream>
-#include <limits>
+#include <stdexcept>
 
 using namespace std;
 
-double celsiusToFahrenheit(double celsius) {
-    return (celsius * 9.0 / 5.0) + 32.0;
-}
-
-double fahrenheitToCelsius(double fahrenheit) {
-    return (fahrenheit - 32.0) * 5.0 / 9.0;
-}
-int main() {
-    double celsius, fahrenheit;
-
-    cout << "Введите температуру в градусах Цельсия: ";
-    cin >> celsius;
-    fahrenheit = celsiusToFahrenheit(celsius);
-    cout << "Температура в градусах Фаренгейта: " << static_cast<int>(fahrenheit) << endl;
-
-    cout << "Введите температуру в градусах Фаренгейта: ";
-    cin >> fahrenheit;
-    celsius = fahrenheitToCelsius(fahrenheit);
-    cout << "Температура в градусах Цельсия: " << static_cast<int>(celsius) << endl;
-
-   
-}
-
-ВТОРАЯ ЧАСТЬ
-
-#include <iostream>
-#include <string>
-
-using namespace std;
-
-class Vehicle {
-public:
-    virtual void displayInfo() const = 0;
-    virtual ~Vehicle() {}
-};
-
-class Car : public Vehicle {
-private:
-    string brand;
-    int doors;
-
-public:
-    Car(const string& brand, int doors) : brand(brand), doors(doors) {}
-
-    void displayInfo() const override {
-        cout << "Легковой автомобиль: " << brand << ", Двери: " << doors << endl;
+double divide(double numerator, double denominator) {
+    if (denominator == 0) {
+        throw runtime_error("Ошибка: Деление на ноль.");
     }
-};
-
-class Truck : public Vehicle {
-private:
-    string brand;
-    double loadCapacity;
-
-public:
-    Truck(const string& brand, double loadCapacity) : brand(brand), loadCapacity(loadCapacity) {}
-
-    void displayInfo() const override {
-        cout << "Грузовой автомобиль: " << brand << ", Грузоподъемность: " << loadCapacity << " тонн" << endl;
-    }
-};
+    return numerator / denominator;
+}
 
 int main() {
-    const int FLEET_SIZE = 4;
-    Vehicle* fleet[FLEET_SIZE];
+    double num1, num2;
 
-    fleet[0] = new Car("Toyota", 4);
-    fleet[1] = new Truck("Volvo", 10);
-    fleet[2] = new Car("Honda", 2);
-    fleet[3] = new Truck("Scania", 15);
+    try {
+        cout << "Введите первое число: ";
+        if (!(cin >> num1)) {
+            throw invalid_argument("Ошибка: Некорректный ввод первого числа.");
+        }
 
-    cout << "Информация об автопарке:" << endl;
-    for (int i = 0; i < FLEET_SIZE; i++) {
-        fleet[i]->displayInfo();
+        cout << "Введите второе число: ";
+        if (!(cin >> num2)) {
+            throw invalid_argument("Ошибка: Некорректный ввод второго числа.");
+        }
+
+        double result = divide(num1, num2);
+        cout << "Результат деления: " << result << endl;
+
+    } catch (const runtime_error& e) {
+        cout << e.what() << endl;
+    } catch (const invalid_argument& e) {
+        cout << e.what() << endl;
+    } catch (...) {
+        cout << "Произошла неожиданная ошибка." << endl;
     }
-
-    for (int i = 0; i < FLEET_SIZE; i++) {
-        delete fleet[i];
-    }
-
 
 }
